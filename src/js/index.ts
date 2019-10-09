@@ -1,12 +1,40 @@
-interface Person {
-    firstName: string;
-    lastName: string;
-}
+import axios, {
+    AxiosResponse,
+    AxiosError
+} from "../../node_modules/axios/index";
 
-function greeter(person: Person): string {
-    return "Hello, " + person.firstName + " " + person.lastName;
+interface IMusicRecord {
+    title: string;
+    artist: string;
+    duration: string;
+    yearOfPublication: string;
+    numberOfTracks: string;
 }
-let user: Person = { firstName: "John", lastName: "Doe" };
+let baseUri: string = "http://localhost:64665/api/MusicRecords";
+let GetAllButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("GetAll");
+let GetAllOutput: HTMLDivElement = <HTMLDivElement>document.getElementById("contentGetAll");
 
-let element: HTMLDivElement = <HTMLDivElement> document.getElementById("content");
-element.innerHTML = greeter(user);
+GetAllButton.addEventListener("click", GetAll)
+
+function GetAll(): void {
+    console.log("so far")
+    axios.get<IMusicRecord[]>(baseUri)
+        .then(function (response: AxiosResponse<IMusicRecord[]>): void {
+            let result: string = "<ul>";
+            response.data.forEach((music: IMusicRecord) => {
+                result += "<li> Title: " + music.title + " Kunstner: " + music.artist + " længde: " + music.duration + " min Udgivelses år: " + music.yearOfPublication + " antal nummere: " + music.numberOfTracks + "</li>"
+            });
+            result += "</ul>";
+            GetAllOutput.innerHTML = result;
+        })
+        .catch(function (error: AxiosError): void { // error in GET or in generateSuccess?
+            if (error.response) {
+                // the request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                // https://kapeli.com/cheat_sheets/Axios.docset/Contents/Resources/Documents/index
+                GetAllOutput.innerHTML = error.message;
+            } else { // something went wrong in the .then block?
+                GetAllOutput.innerHTML = error.message;
+            }
+        });
+}
