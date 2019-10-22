@@ -67,3 +67,51 @@ function GetByTitle(): void {
 function Convert(music: IMusicRecord): string {
     return "Title: " + music.title + " Kunstner: " + music.artist + " længde: " + music.duration + " min Udgivelses år: " + music.yearOfPublication + " antal nummere: " + music.numberOfTracks;
 }
+
+let GetByArtistInput : HTMLInputElement = <HTMLInputElement>document.getElementById("searchArtist")
+let GetByArtistOutput : HTMLDivElement = <HTMLDivElement>document.getElementById("searchArtistContent")
+let GetByArtistButton : HTMLButtonElement = <HTMLButtonElement>document.getElementById("searchArtistButton")
+GetByArtistButton.addEventListener("click", GetByArtist)
+
+function GetByArtist(): void {
+    console.log(GetByArtistInput.value)
+    axios.get<IMusicRecord[]>(baseUri + "/artist/" + GetByArtistInput.value)
+    .then(function(response: AxiosResponse<IMusicRecord[]>): void{
+        
+        let result: string = "<ul>";
+        response.data.forEach((music: IMusicRecord) => {
+            result += "<li>" + Convert(music) + "</li>"
+        });
+        result += "</ul>";
+
+        GetByArtistOutput.innerHTML = result;
+    })
+    .catch(function (error: AxiosError): void { // error in GET or in generateSuccess?
+        if (error.response) {
+            // the request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            // https://kapeli.com/cheat_sheets/Axios.docset/Contents/Resources/Documents/index
+            GetByArtistOutput.innerHTML = error.message;
+        } else { // something went wrong in the .then block?
+            GetByArtistOutput.innerHTML = error.message;
+        }
+    });
+}
+
+let AddTitleInput : HTMLInputElement = <HTMLInputElement>document.getElementById("addTitle")
+let AddArtistInput : HTMLInputElement = <HTMLInputElement>document.getElementById("addArtist")
+let AddDurationInput : HTMLInputElement = <HTMLInputElement>document.getElementById("addDuration")
+let AddPublicationYearInput : HTMLInputElement = <HTMLInputElement>document.getElementById("addPublicationYear")
+let AddTracksInput : HTMLInputElement = <HTMLInputElement>document.getElementById("addTracks")
+let AddButtonInput : HTMLButtonElement = <HTMLButtonElement>document.getElementById("addButton")
+let AddContentOutput : HTMLDivElement = <HTMLDivElement>document.getElementById("addContent")
+AddButtonInput.addEventListener("click", AddMusic)
+
+function AddMusic(): void {
+    console.log(AddTitleInput.value)
+    axios.post(baseUri, {title: AddTitleInput.value, artist: AddArtistInput.value, 
+        duration: AddDurationInput.value, yearOfPublication:AddPublicationYearInput.value, 
+        numberOfTracks: AddTracksInput.value})
+        .then((response: AxiosResponse)=>{AddContentOutput.innerHTML = response.status + " " + response.statusText})
+        .catch((error: AxiosError) => {AddContentOutput.innerHTML = error.message});
+}
