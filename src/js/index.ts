@@ -22,7 +22,7 @@ function GetAll(): void {
         .then(function (response: AxiosResponse<IMusicRecord[]>): void {
             let result: string = "<ul>";
             response.data.forEach((music: IMusicRecord) => {
-                result += "<li> Title: " + music.title + " Kunstner: " + music.artist + " længde: " + music.duration + " min Udgivelses år: " + music.yearOfPublication + " antal nummere: " + music.numberOfTracks + "</li>"
+                result += "<li>" + Convert(music) + "</li>"
             });
             result += "</ul>";
             GetAllOutput.innerHTML = result;
@@ -37,4 +37,33 @@ function GetAll(): void {
                 GetAllOutput.innerHTML = error.message;
             }
         });
+}
+let GetByTitleInput: HTMLInputElement = <HTMLInputElement>document.getElementById("searchTitle");
+let GetByTitleOutput: HTMLDivElement = <HTMLDivElement>document.getElementById("SearchTitleContent")
+let GetByTitleButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("searchTitleButton")
+GetByTitleButton.addEventListener("click", GetByTitle)
+
+function GetByTitle(): void {
+    console.log(GetByTitleInput.value)
+    axios.get<IMusicRecord>(baseUri + "/" + GetByTitleInput.value)
+        .then(function (response: AxiosResponse<IMusicRecord>): void {
+            
+            GetByTitleOutput.innerHTML = Convert(response.data)
+
+        })
+        .catch(function (error: AxiosError): void { // error in GET or in generateSuccess?
+            if (error.response) {
+                // the request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                // https://kapeli.com/cheat_sheets/Axios.docset/Contents/Resources/Documents/index
+                GetByTitleOutput.innerHTML = error.message;
+            } else { // something went wrong in the .then block?
+                GetByTitleOutput.innerHTML = error.message;
+            }
+        });
+
+}
+
+function Convert(music: IMusicRecord): string {
+    return "Title: " + music.title + " Kunstner: " + music.artist + " længde: " + music.duration + " min Udgivelses år: " + music.yearOfPublication + " antal nummere: " + music.numberOfTracks;
 }
