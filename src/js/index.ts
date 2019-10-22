@@ -115,3 +115,14 @@ function AddMusic(): void {
         .then((response: AxiosResponse)=>{AddContentOutput.innerHTML = response.status + " " + response.statusText})
         .catch((error: AxiosError) => {AddContentOutput.innerHTML = error.message});
 }
+
+let DeleteInput : HTMLInputElement = <HTMLInputElement>document.getElementById("deleteTitle")
+let DeleteOutput : HTMLDivElement = <HTMLDivElement>document.getElementById("deleteOutput")
+let DeleteButton : HTMLButtonElement = <HTMLButtonElement>document.getElementById("deleteButton")
+DeleteButton.addEventListener("click", DeleteMusic)
+
+function DeleteMusic(): void {
+    console.log(DeleteInput.value)
+    axios.delete(baseUri + "/" + DeleteInput.value)
+    .then(function((response: AxiosResponse) => {DeleteOutput.innerHTML = response.status + " " + response.statusText}))
+}
