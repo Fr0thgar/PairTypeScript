@@ -124,5 +124,5 @@ DeleteButton.addEventListener("click", DeleteMusic)
 function DeleteMusic(): void {
     console.log(DeleteInput.value)
     axios.delete(baseUri + "/" + DeleteInput.value)
-    .then(function((response: AxiosResponse) => {DeleteOutput.innerHTML = response.status + " " + response.statusText}))
+    .then(function(response: AxiosResponse)  {DeleteOutput.innerHTML = response.status + " " + response.statusText})
 }
